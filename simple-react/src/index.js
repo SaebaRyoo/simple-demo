@@ -1,7 +1,6 @@
 // import React from 'react';
 // import ReactDOM from 'react-dom';
-// import React from './lib/myReact';
-import React from './lib/renderer'
+import React from './lib/myReact';
 
 const ReactDOM = React;
 

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redux</title>
+  <script src="./redux.js"></script>
+</head>
+<body>
+  <script>
+    const { createStore, combineReducers } = window.Redux;
+
+    const ADD_TODO = 'ADD_TODO';
+
+    const initState = {
+      num: 0
+    }
+
+    // action
+    function addTodo(payload) {
+      return {
+        type: ADD_TODO,
+        payload
+      }
+    }
+
+    const ActionMap = {
+      [ADD_TODO]: (state, payload) => {
+        return {...state, num: payload.num}
+      }
+    }
+
+    function todoReducer(state = initState, action) {
+      return ActionMap[action.type] ? ActionMap[action.type](state, action.payload) : state;
+    }
+
+    let store = createStore(combineReducers({
+      toDo: todoReducer
+    }))
+    
+    let unsubscribe = store.subscribe(() => {
+      console.log(store.getState())
+    })
+
+    store.dispatch(addTodo({ num: 1}))  
+    // setInterval(() => {
+          
+    //   store.dispatch(addTodo({ num: 1}))  
+    // }, 1000)
+
+
+        
+    function logger({ getState }) {
+      return (next) => (action) => {
+        console.log('will dispatch', action)
+
+        // 调用 middleware 链中下一个 middleware 的 dispatch。
+        let returnValue = next(action)
+
+        console.log('state after dispatch', getState())
+
+        // 一般会是 action 本身，除非
+        // 后面的 middleware 修改了它。
+        return returnValue
+      }
+    }
+
+    function thunk ({ dispatch, getState }) {
+      return (next) => (action) => {
+        if (typeof action === 'function') {
+          // 当action是函数时，控制反转
+          return action(dispatch, getState, extraArgument);
+        }
+
+        return next(action);
+      }
+    };
+  </script>
+</body>
+</html>
